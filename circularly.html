@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Circular Linked List Visualizer</title>
+  <link rel="icon" href="Icons/cll.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f4f8;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+    }
+    #info {
+      max-width: 700px;
+      margin: 10px auto 30px auto;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      /* box-shadow: 0 0 8px #ccc; */
+      box-shadow: 0 2px 10px rgba(156, 39, 176, 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+
+    #info:hover{
+      box-shadow: 0 6px 18px rgba(156, 39, 176, 0.3);
+    }
+    #input-area {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-left: 10px;
+      padding: 9px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #visualizer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      align-items: center;
+      position: relative;
+    }
+    .node {
+      background-color: #9C27B0;
+      color: white;
+      /* Make node circular */
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 0 0 8px #7a1e97;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    /* Glow effect on hover */
+    .node:hover {
+      box-shadow: 0 0 20px 5px #d05ce3;
+      transform: scale(1.1);
+    }
+    .node.highlight {
+      box-shadow: 0 0 20px 5px #d05ce3;
+    }
+    .arrow-right {
+      font-size: 30px;
+      color: #555;
+      animation: pulseArrow 1.5s infinite alternate;
+      user-select: none;
+      margin-left: 5px;
+      align-self: center;
+    }
+    @keyframes pulseArrow {
+      0% { color: #555; }
+      100% { color: #9C27B0; }
+    }
+    #controls {
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px #ccc;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #controls:hover {
+      box-shadow: 0 6px 18px rgba(156, 39, 176, 0.3);
+    }
+
+    #controls > * {
+      flex: 1 1 150px;
+      min-width: 150px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #backHome {
+      display: block;
+      margin: 30px auto;
+      text-align: center;
+      font-size: 18px;
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: bold;
+    }
+    #backHome:hover {
+      text-decoration: underline;
+    }
+
+    
+
+    .headings {
+      color: #9c27b0;
+    }
+
+    button {
+      background-color: #9c27b0
+    }
+    button:hover{
+      background-color: #6a1b9a;
+      
+    }
+
+    .headings {
+      color: #9c27b0;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="headings">Circular Linked List Visualizer</h1>
+
+  <div id="info">
+    <p><strong>About Circular Linked List:</strong> A circular linked list is a linked list where all nodes are connected in a circle. The last node points back to the first node, allowing continuous traversal.</p>
+    <div style="margin-top: 20px; text-align:center;">
+      <img 
+        src="https://media.geeksforgeeks.org/wp-content/uploads/Circular-doubly-linked-list.png" 
+        alt="Circular Linked List Diagram" 
+        style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.15);" 
+      />
+    </div>
+  </div>
+
+  <div id="input-area">
+    <label for="arrayInput">Enter array elements (comma separated):</label><br />
+    <input type="text" id="arrayInput" placeholder="e.g., 1,2,3,4" />
+    <button  type="submit" id="createListBtn">Create List</button>
+  </div>
+
+  <div id="controls">
+    <div>
+      <label for="insertValueHead">Insert at Head</label>
+      <input type="number" id="insertValueHead" placeholder="Value" />
+      <button style="margin-top: 5px;" id="insertHeadBtn">Insert</button>
+    </div>
+
+    <div>
+      <label for="insertValueTail">Insert at Tail</label>
+      <input type="number" id="insertValueTail" placeholder="Value" />
+      <button style="margin-top: 5px;" id="insertTailBtn">Insert</button>
+    </div>
+
+    <div>
+      <label>Insert at Position</label>
+      <input type="number" id="insertValuePos" placeholder="Value" />
+      <input type="number" id="insertPos" placeholder="Position (1-based)" />
+      <button style="margin-top: 5px;" id="insertPosBtn">Insert</button>
+    </div>
+
+    <div>
+      <label>Delete from Head</label>
+      <button style="margin-top: 5px;" id="deleteHeadBtn">Delete</button>
+    </div>
+
+    <div>
+      <label>Delete from Tail</label>
+      <button style="margin-top: 5px;" id="deleteTailBtn">Delete</button>
+    </div>
+
+    <div>
+      <label>Delete from Position</label>
+      <input type="number" id="deletePos" placeholder="Position (1-based)" />
+      <button style="margin-top: 5px;" id="deletePosBtn">Delete</button>
+    </div>
+
+    <div>
+      <label>Reverse List</label>
+      <button id="reverseBtn">Reverse</button>
+    </div>
+  </div>
+
+  <a href="index.html" id="backHome">← Back to Home</a>
+
+<script>
+  // Circular Linked List Node class
+  class Node {
+    constructor(data) {
+      this.data = data;
+      this.next = null;
+    }
+  }
+
+  // Circular Linked List class
+  class CircularLinkedList {
+    constructor() {
+      this.head = null;
+    }
+
+    createFromArray(arr) {
+      this.head = null;
+      for (let val of arr) {
+        this.insertAtTail(val);
+      }
+    }
+
+    insertAtHead(data) {
+      const newNode = new Node(data);
+      if (!this.head) {
+        this.head = newNode;
+        newNode.next = newNode;
+        return;
+      }
+      let tail = this.head;
+      while (tail.next !== this.head) {
+        tail = tail.next;
+      }
+      newNode.next = this.head;
+      tail.next = newNode;
+      this.head = newNode;
+    }
+
+    insertAtTail(data) {
+      const newNode = new Node(data);
+      if (!this.head) {
+        this.head = newNode;
+        newNode.next = newNode;
+        return;
+      }
+      let tail = this.head;
+      while (tail.next !== this.head) {
+        tail = tail.next;
+      }
+      tail.next = newNode;
+      newNode.next = this.head;
+    }
+
+    insertAtPosition(data, pos) {
+      if (pos < 1) return false;
+      if (pos === 1) {
+        this.insertAtHead(data);
+        return true;
+      }
+      let temp = this.head;
+      let count = 1;
+      while (temp.next !== this.head && count < pos - 1) {
+        temp = temp.next;
+        count++;
+      }
+      if (count !== pos - 1) return false;
+      const newNode = new Node(data);
+      newNode.next = temp.next;
+      temp.next = newNode;
+      return true;
+    }
+
+    deleteHead() {
+      if (!this.head) return false;
+      if (this.head.next === this.head) {
+        this.head = null;
+        return true;
+      }
+      let tail = this.head;
+      while (tail.next !== this.head) {
+        tail = tail.next;
+      }
+      this.head = this.head.next;
+      tail.next = this.head;
+      return true;
+    }
+
+    deleteTail() {
+      if (!this.head) return false;
+      if (this.head.next === this.head) {
+        this.head = null;
+        return true;
+      }
+      let temp = this.head;
+      let prev = null;
+      while (temp.next !== this.head) {
+        prev = temp;
+        temp = temp.next;
+      }
+      prev.next = this.head;
+      return true;
+    }
+
+    deleteAtPosition(pos) {
+      if (pos < 1 || !this.head) return false;
+      if (pos === 1) {
+        return this.deleteHead();
+      }
+      let temp = this.head;
+      let prev = null;
+      let count = 1;
+      while (temp.next !== this.head && count < pos) {
+        prev = temp;
+        temp = temp.next;
+        count++;
+      }
+      if (count !== pos) return false;
+      prev.next = temp.next;
+      return true;
+    }
+
+    reverse() {
+      if (!this.head || this.head.next === this.head) return;
+      let prev = this.head;
+      let current = this.head.next;
+      let nextNode;
+      while (current !== this.head) {
+        nextNode = current.next;
+        current.next = prev;
+        prev = current;
+        current = nextNode;
+      }
+      current.next = prev;
+      this.head = prev;
+    }
+
+    toArray() {
+      const arr = [];
+      if (!this.head) return arr;
+      let temp = this.head;
+      do {
+        arr.push(temp.data);
+        temp = temp.next;
+      } while (temp !== this.head);
+      return arr;
+    }
+  }
+
+  // Visualizer and interaction logic
+  const list = new CircularLinkedList();
+  const visualizer = document.getElementById('visualizer');
+
+  function clearVisualizer() {
+    visualizer.innerHTML = '';
+  }
+
+  function createNodeElement(data, highlight = false) {
+    const nodeEl = document.createElement('div');
+    nodeEl.className = 'node';
+    if (highlight) nodeEl.classList.add('highlight');
+
+    const dataSpan = document.createElement('span');
+    dataSpan.textContent = data;
+    nodeEl.appendChild(dataSpan);
+
+    const arrowRight = document.createElement('span');
+    arrowRight.className = 'arrow-right';
+    arrowRight.innerHTML = '→';
+    nodeEl.appendChild(arrowRight);
+
+    return nodeEl;
+  }
+
+  function renderList(highlightPos = -1) {
+    clearVisualizer();
+    const arr = list.toArray();
+    arr.forEach((val, idx) => {
+      const nodeEl = createNodeElement(val, idx === highlightPos);
+      visualizer.appendChild(nodeEl);
+    });
+  }
+
+  // Event handlers
+
+  document.getElementById('arrayInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('createListBtn').click();
+    }
+  });
+
+  document.getElementById('createListBtn').onclick = (e) => {
+    e.preventDefault();
+    const input = document.getElementById('arrayInput').value.trim();
+    if (!input) {
+      alert('Please enter some values.');
+      return;
+    }
+    const arr = input.split(',').map(x => Number(x.trim())).filter(x => !isNaN(x));
+    if (arr.length === 0) {
+      alert('Enter valid numbers separated by commas.');
+      return;
+    }
+    list.createFromArray(arr);
+    renderList();
+  };
+
+  document.getElementById('insertHeadBtn').onclick = () => {
+    const val = Number(document.getElementById('insertValueHead').value);
+    if (isNaN(val)) {
+      alert('Enter a valid number for head insertion.');
+      return;
+    }
+    list.insertAtHead(val);
+    renderList();
+  };
+
+  document.getElementById('insertTailBtn').onclick = () => {
+    const val = Number(document.getElementById('insertValueTail').value);
+    if (isNaN(val)) {
+      alert('Enter a valid number for tail insertion.');
+      return;
+    }
+    list.insertAtTail(val);
+    renderList();
+  };
+
+  document.getElementById('insertPosBtn').onclick = () => {
+    const val = Number(document.getElementById('insertValuePos').value);
+    const pos = Number(document.getElementById('insertPos').value);
+    if (isNaN(val) || isNaN(pos) || pos < 1) {
+      alert('Enter valid number and position (>=1) for insertion.');
+      return;
+    }
+    const success = list.insertAtPosition(val, pos);
+    if (!success) {
+      alert('Position out of bounds.');
+      return;
+    }
+    renderList();
+  };
+
+  document.getElementById('deleteHeadBtn').onclick = () => {
+    const success = list.deleteHead();
+    if (!success) alert('List is empty.');
+    renderList();
+  };
+
+  document.getElementById('deleteTailBtn').onclick = () => {
+    const success = list.deleteTail();
+    if (!success) alert('List is empty.');
+    renderList();
+  };
+
+  document.getElementById('deletePosBtn').onclick = () => {
+    const pos = Number(document.getElementById('deletePos').value);
+    if (isNaN(pos) || pos < 1) {
+      alert('Enter a valid position (>=1) for deletion.');
+      return;
+    }
+    const success = list.deleteAtPosition(pos);
+    if (!success) {
+      alert('Position out of bounds or list is empty.');
+      return;
+    }
+    renderList();
+  };
+
+  document.getElementById('reverseBtn').onclick = () => {
+    list.reverse();
+    renderList();
+  };
+</script>
+</body>
+</html>

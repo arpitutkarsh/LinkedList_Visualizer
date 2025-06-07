@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Singly Linked List Visualizer</title>
+  <link rel="icon" href="Icons/sll.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f0f4f8;
+      margin: 50;
+
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #info {
+      max-width: 700px;
+      margin: 10px auto 30px auto;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      /* box-shadow: 0 0 8px #ccc; */
+      box-shadow: 0 2px 10px rgba(156, 39, 176, 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+
+    #info:hover{
+      box-shadow: 0 6px 18px rgba(156, 39, 176, 0.3);
+    }
+
+    #input-area {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 300px;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-left: 10px;
+      padding: 9px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s ease;
+      margin-top: 5px; 
+    }
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+    button:hover {
+      background-color: #0056b3;
+      
+    }
+    #visualizer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .node {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 0 0 8px #3a9d3a;
+      transition: box-shadow 0.3s ease;
+    }
+    /* New glowing effect on hover */
+    .node:hover {
+      box-shadow: 0 0 20px 8px rgba(0, 150, 255, 0.8);
+      transition: box-shadow 0.3s ease;
+    }
+    .node.highlight {
+      box-shadow: 0 0 20px 5px #ff9800;
+    }
+    .arrow {
+      font-size: 30px;
+      margin: 0 5px;
+      align-self: center;
+      color: #555;
+      animation: pulseArrow 1.5s infinite alternate;
+    }
+    @keyframes pulseArrow {
+      0% { color: #555; }
+      100% { color: #007BFF; }
+    }
+    #controls {
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(156, 39, 176, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+      transition: box-shadow 0.3s ease;
+      cursor: default;
+      border-radius: 10px;
+    }
+
+    #controls:hover {
+      box-shadow: 0 6px 18px rgba(156, 39, 176, 0.3);
+    }
+    #reverseBtn{
+      background-color: "blue";
+      color: white;
+      margin-top: 0px;
+      margin-left: 23px;
+    }
+
+    #controls > * {
+      flex: 1 1 150px;
+      min-width: 150px;
+
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #backHome {
+      display: block;
+      margin: 30px auto;
+      text-align: center;
+      font-size: 18px;
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: bold;
+    }
+    #backHome:hover {
+      text-decoration: underline;
+    }
+
+    .headings {
+      color: #9c27b0;
+    }
+
+    button {
+      background-color: #9c27b0
+    }
+    button:hover{
+      background-color: #6a1b9a;
+      
+    }
+  </style>
+</head>
+<body>
+  <h1 class="headings">Singly Linked List Visualizer</h1>
+
+  <div id="info">
+    <p><strong>About Singly Linked List:</strong> A singly linked list is a linear data structure where each node contains a data part and a pointer to the next node. It allows traversal in one direction only.</p>
+    <!-- Added image showing singly linked list -->
+    <div style="margin-top: 20px; text-align:center;">
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Singly-linked-list.svg" 
+        alt="Singly Linked List Diagram" 
+        style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.15);" 
+      />
+    </div>
+  </div>
+
+  <div id="input-area">
+    <label for="arrayInput">Enter array elements (comma separated):</label><br />
+    <input type="text" id="arrayInput" placeholder="e.g., 5,10,15,20" />
+    <button id="createListBtn">Create List</button>
+  </div>
+
+  <div id="visualizer"></div>
+
+  <div  id="controls">
+    <div style="padding-right:10px;">
+      <label for="insertValueHead">Insert at Head</label>
+      <input type="number" id="insertValueHead" placeholder="Value" />
+      <button id="insertHeadBtn">Insert</button>
+    </div>
+
+    <div style="padding-right:10px; padding-bottom: 10px;">
+      <label for="insertValueTail">Insert at Tail</label>
+      <input type="number" id="insertValueTail" placeholder="Value" />
+      <button  id="insertTailBtn">Insert</button>
+    </div>
+
+    <div style="padding-right:10px; ">
+      <label>Insert at Position</label>
+      <input type="number" id="insertValuePos" placeholder="Value" />
+      <input type="number" id="insertPos" placeholder="Position (1-based)" />
+      <button id="insertPosBtn">Insert</button>
+    </div>
+
+    <div>
+      <label>Delete from Head</label>
+      <button id="deleteHeadBtn">Delete</button>
+    </div>
+
+    <div>
+      <label>Delete from Tail</label>
+      <button id="deleteTailBtn">Delete</button>
+    </div>
+
+    <div>
+      <label>Delete from Position</label>
+      <input type="number" id="deletePos" placeholder="Position (1-based)" />
+      <button id="deletePosBtn">Delete</button>
+    </div>
+
+    <div>
+      <label>Reverse List</label>
+      <button id="reverseBtn">Reverse</button>
+    </div>
+  </div>
+
+  <a href="index.html" id="backHome">← Back to Home</a>
+
+<script>
+  // Singly Linked List Node class
+  class Node {
+    constructor(data) {
+      this.data = data;
+      this.next = null;
+    }
+  }
+
+  // Singly Linked List class
+  class SinglyLinkedList {
+    constructor() {
+      this.head = null;
+    }
+
+    createFromArray(arr) {
+      this.head = null;
+      for(let val of arr) {
+        this.insertAtTail(val);
+      }
+    }
+
+    insertAtHead(data) {
+      const newNode = new Node(data);
+      newNode.next = this.head;
+      this.head = newNode;
+    }
+
+    insertAtTail(data) {
+      const newNode = new Node(data);
+      if (!this.head) {
+        this.head = newNode;
+        return;
+      }
+      let temp = this.head;
+      while(temp.next) temp = temp.next;
+      temp.next = newNode;
+    }
+
+    insertAtPosition(data, pos) {
+      if (pos < 1) return false;
+      if (pos === 1) {
+        this.insertAtHead(data);
+        return true;
+      }
+      let temp = this.head;
+      let count = 1;
+      while(temp && count < pos-1) {
+        temp = temp.next;
+        count++;
+      }
+      if (!temp) return false;
+      const newNode = new Node(data);
+      newNode.next = temp.next;
+      temp.next = newNode;
+      return true;
+    }
+
+    deleteHead() {
+      if (!this.head) return false;
+      this.head = this.head.next;
+      return true;
+    }
+
+    deleteTail() {
+      if (!this.head) return false;
+      if (!this.head.next) {
+        this.head = null;
+        return true;
+      }
+      let temp = this.head;
+      while(temp.next && temp.next.next) {
+        temp = temp.next;
+      }
+      temp.next = null;
+      return true;
+    }
+
+    deleteAtPosition(pos) {
+      if (pos < 1 || !this.head) return false;
+      if (pos === 1) {
+        this.head = this.head.next;
+        return true;
+      }
+      let temp = this.head;
+      let count = 1;
+      while(temp.next && count < pos-1) {
+        temp = temp.next;
+        count++;
+      }
+      if (!temp.next) return false;
+      temp.next = temp.next.next;
+      return true;
+    }
+
+    reverse() {
+      if (!this.head || !this.head.next) alert("List is empty or contains one node"); // No need to reverse if list is empty or has one node
+      let prev = null;
+      let current = this.head;
+      while(current) {
+        let nextNode = current.next;
+        current.next = prev;
+        prev = current;
+        current = nextNode;
+      }
+      this.head = prev;
+    }
+
+    toArray() {
+      let arr = [];
+      let temp = this.head;
+      while(temp) {
+        arr.push(temp.data);
+        temp = temp.next;
+      }
+      return arr;
+    }
+  }
+
+  // Visualizer and interaction logic
+  const list = new SinglyLinkedList();
+  const visualizer = document.getElementById('visualizer');
+
+  function clearVisualizer() {
+    visualizer.innerHTML = '';
+  }
+
+  function createNodeElement(data, highlight = false) {
+    const nodeEl = document.createElement('div');
+    nodeEl.className = 'node';
+    if (highlight) nodeEl.classList.add('highlight');
+    nodeEl.textContent = data;
+    return nodeEl;
+  }
+
+  function createArrowElement() {
+    const arrowEl = document.createElement('span');
+    arrowEl.className = 'arrow';
+    arrowEl.innerHTML = '→';
+    return arrowEl;
+  }
+
+  function renderList(highlightPos = -1) {
+    clearVisualizer();
+    let arr = list.toArray();
+    arr.forEach((val, idx) => {
+      const nodeEl = createNodeElement(val, idx === highlightPos);
+      visualizer.appendChild(nodeEl);
+      if (idx !== arr.length - 1) {
+        const arrowEl = createArrowElement();
+        visualizer.appendChild(arrowEl);
+      }
+    });
+  }
+
+  // Event handlers
+  document.getElementById('arrayInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('createListBtn').click();
+    }
+  });
+
+  document.getElementById('createListBtn').onclick = () => {
+    const input = document.getElementById('arrayInput').value.trim();
+    if (!input) {
+      alert('Please enter some values.');
+      return;
+    }
+    const arr = input.split(',').map(x => Number(x.trim())).filter(x => !isNaN(x));
+    if (arr.length === 0) {
+      alert('Enter valid numbers separated by commas.');
+      return;
+    }
+    list.createFromArray(arr);
+    renderList();
+  };
+
+  document.getElementById('insertHeadBtn').onclick = () => {
+    const val = Number(document.getElementById('insertValueHead').value);
+    if (isNaN(val)) {
+      alert('Enter a valid number for head insertion.');
+      return;
+    }
+    list.insertAtHead(val);
+    renderList();
+  };
+
+  document.getElementById('insertTailBtn').onclick = () => {
+    const val = Number(document.getElementById('insertValueTail').value);
+    if (isNaN(val)) {
+      alert('Enter a valid number for tail insertion.');
+      return;
+    }
+    list.insertAtTail(val);
+    renderList();
+  };
+
+  document.getElementById('insertPosBtn').onclick = () => {
+    const val = Number(document.getElementById('insertValuePos').value);
+    const pos = Number(document.getElementById('insertPos').value);
+    if (isNaN(val) || isNaN(pos) || pos < 1) {
+      alert('Enter valid number and position (>=1) for insertion.');
+      return;
+    }
+    const success = list.insertAtPosition(val, pos);
+    if (!success) {
+      alert('Position out of bounds.');
+      return;
+    }
+    renderList();
+  };
+
+  document.getElementById('deleteHeadBtn').onclick = () => {
+    const success = list.deleteHead();
+    if (!success) alert('List is empty.');
+    renderList();
+  };
+
+  document.getElementById('deleteTailBtn').onclick = () => {
+    const success = list.deleteTail();
+    if (!success) alert('List is empty.');
+    renderList();
+  };
+
+  document.getElementById('deletePosBtn').onclick = () => {
+    const pos = Number(document.getElementById('deletePos').value);
+    if (isNaN(pos) || pos < 1) {
+      alert('Enter a valid position (>=1) for deletion.');
+      return;
+    }
+    const success = list.deleteAtPosition(pos);
+    if (!success) {
+      alert('Position out of bounds or list is empty.');
+      return;
+    }
+    renderList();
+  };
+
+  document.getElementById('reverseBtn').onclick = () => {
+    list.reverse();
+    renderList();
+  };
+</script>
+</body>
+</html>
